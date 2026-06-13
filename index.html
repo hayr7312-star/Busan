@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Busan Emotional Travel Map | 부산 감성 여행 지도</title>
+    
+    <!-- Google Fonts: Outfit & Noto Sans KR/JP -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Noto+Sans+KR:wght@300;400;500;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Leaflet.js CSS for Map -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    
+    <!-- Custom Style Sheet -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <header class="navbar">
+        <div class="logo">
+            <span class="logo-emoji">🌊</span>
+            <span class="logo-text" data-i18n="nav-title">부산 감성 여행 가이드</span>
+        </div>
+        <div class="nav-controls">
+            <!-- Language Selector Switch -->
+            <div class="lang-switch-container">
+                <button class="lang-btn active" id="lang-ko" onclick="setLanguage('ko')">KR</button>
+                <button class="lang-btn" id="lang-ja" onclick="setLanguage('ja')">JP</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <span class="badge" data-i18n="hero-badge">Welcome to Busan!</span>
+            <h1 class="hero-title" data-i18n="hero-title">바다와 감성이 머무는 도시, 부산</h1>
+            <p class="hero-subtitle" data-i18n="hero-desc">일본인 친구를 위한 맞춤형 2박 3일 힐링 코스 지도입니다. 부산의 매력을 가득 느껴보세요!</p>
+            <div class="hero-scroll-btn">
+                <span class="arrow-down">↓</span>
+            </div>
+        </div>
+        <!-- Wave Divider -->
+        <div class="wave-divider">
+            <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+                <path d="M985.66,92.83C906.67,72,823.78,31,743.84,14.19c-82.26-17.34-168.06-16.33-250.45.39-57.84,11.73-114,31.07-172,41.86A600.21,600.21,0,0,1,0,27.35V120H1200V30.28C1122.37,58.7,1058.16,111.75,985.66,92.83Z" class="shape-fill"></path>
+            </svg>
+        </div>
+    </section>
+
+    <!-- Main Container: Map and Schedule Section -->
+    <main class="main-container">
+        <!-- Control Tabs (Filter by Day) -->
+        <div class="filter-bar">
+            <button class="filter-tab active" data-day="all" data-i18n="tab-all">전체 일정</button>
+            <button class="filter-tab" data-day="1" data-i18n="tab-day1">Day 1: 바다 & 해산물</button>
+            <button class="filter-tab" data-day="2" data-i18n="tab-day2">Day 2: 감성 카페</button>
+            <button class="filter-tab" data-day="3" data-i18n="tab-day3">Day 3: 핫플레이스</button>
+        </div>
+
+        <div class="content-layout">
+            <!-- Left Panel: Interactive Map (Sticky) -->
+            <section class="map-section">
+                <div class="map-card">
+                    <div class="map-header">
+                        <span class="pulse-dot"></span>
+                        <h3 data-i18n="map-header-title">부산 여정 지도</h3>
+                    </div>
+                    <div id="map"></div>
+                    <div class="map-legend">
+                        <span class="legend-item"><span class="legend-dot day-1"></span>Day 1</span>
+                        <span class="legend-item"><span class="legend-dot day-2"></span>Day 2</span>
+                        <span class="legend-item"><span class="legend-dot day-3"></span>Day 3</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Right Panel: Itinerary Details -->
+            <section class="itinerary-section">
+                <!-- DAY 1 TIMELINE -->
+                <div class="day-group" id="day-group-1" data-day="1">
+                    <div class="day-header day-1-color">
+                        <span class="day-badge">Day 1</span>
+                        <h2 data-i18n="day1-title">오션뷰 & 싱싱한 해산물</h2>
+                        <span class="day-desc" data-i18n="day1-subtitle">부산에 오자마자 드넓은 바다와 미식을 경험합니다.</span>
+                    </div>
+                    
+                    <div class="timeline">
+                        <!-- Spot 1 -->
+                        <div class="spot-card" data-lat="35.1583" data-lng="129.1601" onclick="focusMarker(35.1583, 129.1601, 15)">
+                            <div class="spot-icon day-1-bg">1</div>
+                            <div class="spot-content">
+                                <div class="spot-meta">
+                                    <span class="spot-time">13:00</span>
+                                    <span class="spot-tag" data-i18n="tag-scenic">경치맛집</span>
+                                </div>
+                                <h3 class="spot-name" data-i18n="spot1-name">해운대 미포 해변 & 해변열차</h3>
+                                <p class="spot-desc" data-i18n="spot1-desc">해운대 미포에서 송정까지 운행하는 아름다운 블루라인 해변열차를 탑승합니다. 바다 바로 옆을 달리는 철길을 보며 힐링할 수 있어요.</p>
+                                <div class="spot-tips" data-i18n="spot1-tips">💡 팁: 해 질 녘이나 이른 오후에 타면 윤슬이 빛나는 멋진 바다 사진을 찍을 수 있어요. 미리 모바일로 예매하는 것을 추천합니다.</div>
+                            </div>
+                        </div>
+
+                        <!-- Spot 2 -->
+                        <div class="spot-card" data-lat="35.1614" data-lng="129.1763" onclick="focusMarker(35.1614, 129.1763, 15)">
+                            <div class="spot-icon day-1-bg">2</div>
+                            <div class="spot-content">
+                                <div class="spot-meta">
+                                    <span class="spot-time">16:00</span>
+                                    <span class="spot-tag" data-i18n="tag-food">해산물</span>
+                                </div>
+                                <h3 class="spot-name" data-i18n="spot2-name">청사포 조개구이촌</h3>
+                                <p class="spot-desc" data-i18n="spot2-desc">빨간 등대와 파란 바다가 어우러진 조개구이 마을입니다. 바다 바로 앞 노포 감성 가게에서 파도 소리를 들으며 신선한 조개와 장어구이를 즐깁니다.</p>
+                                <div class="spot-tips" data-i18n="spot2-tips">💡 팁: '수민이네' 또는 '끝집'이 유명합니다. 치즈와 버터를 듬뿍 얹어 구워 먹는 부산식 조개구이를 꼭 맛보세요!</div>
+                            </div>
+                        </div>
+
+                        <!-- Spot 3 -->
+                        <div class="spot-card" data-lat="35.1532" data-lng="129.1189" onclick="focusMarker(35.1532, 129.1189, 15)">
+                            <div class="spot-icon day-1-bg">3</div>
+                            <div class="spot-content">
+                                <div class="spot-meta">
+                                    <span class="spot-time">19:30</span>
+                                    <span class="spot-tag" data-i18n="tag-night">야경</span>
+                                </div>
+                                <h3 class="spot-name" data-i18n="spot3-name">광안리 해수욕장 & 민락수변공원</h3>
+                                <p class="spot-desc" data-i18n="spot3-desc">부산 밤바다의 대명사! 형형색색 빛나는 광안대교 야경을 감상합니다. 근처 민락회타운에서 싱싱한 활어회를 포장하거나 횟집에서 야경을 바라보며 저녁 2차를 즐깁니다.</p>
+                                <div class="spot-tips" data-i18n="spot3-tips">💡 팁: 매주 토요일 저녁에는 광안리 해변에서 환상적인 '광안리 M 드론 라이트쇼'가 열립니다. 놓치지 마세요!</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DAY 2 TIMELINE -->
+                <div class="day-group" id="day-group-2" data-day="2">
+                    <div class="day-header day-2-color">
+                        <span class="day-badge">Day 2</span>
+                        <h2 data-i18n="day2-title">인생샷 가득, 예쁜 카페 탐방</h2>
+                        <span class="day-desc" data-i18n="day2-subtitle">감성 넘치는 마을 골목과 바다가 내다보이는 아름다운 카페를 방문합니다.</span>
+                    </div>
+
+                    <div class="timeline">
+                        <!-- Spot 4 -->
+                        <div class="spot-card" data-lat="35.0788" data-lng="129.0436" onclick="focusMarker(35.0788, 129.0436, 15)">
+                            <div class="spot-icon day-2-bg">1</div>
+                            <div class="spot-content">
+                                <div class="spot-meta">
+                                    <span class="spot-time">11:00</span>
+                                    <span class="spot-tag" data-i18n="tag-photo">포토존</span>
+                                </div>
+                                <h3 class="spot-name" data-i18n="spot4-name">영도 흰여울문화마을</h3>
+                                <p class="spot-desc" data-i18n="spot4-desc">절벽을 따라 아기자기한 주택들이 모여 있는 마을로, '부산의 산토리니'라고 불립니다. 영화 촬영지로도 유명하며 파란 바다를 배경으로 인생샷을 남길 수 있는 예쁜 골목이 많습니다.</p>
+                                <div class="spot-tips" data-i18n="spot4-tips">💡 팁: 해안터널 포토존에서 줄을 서서 꼭 역광 실루엣 사진을 찍어보세요.</div>
+                            </div>
+                        </div>
+
+                        <!-- Spot 5 -->
+                        <div class="spot-card" data-lat="35.0792" data-lng="129.0450" onclick="focusMarker(35.0792, 129.0450, 15)">
+                            <div class="spot-icon day-2-bg">2</div>
+                            <div class="spot-content">
+                                <div class="spot-meta">
+                                    <span class="spot-time">13:30</span>
+                                    <span class="spot-tag" data-i18n="tag-cafe">오션뷰카페</span>
+                                </div>
+                                <h3 class="spot-name" data-i18n="spot5-name">영도 신기산업 & 오션뷰 카페거리</h3>
+                                <p class="spot-desc" data-i18n="spot5-desc">흰여울마을 곳곳에 숨겨진 감성 오션뷰 카페(예: 에테르, 손목서가) 혹은 영도 산자락에 위치한 개성 넘치는 대형 카페에서 바다를 바라보며 향긋한 커피와 맛있는 디저트를 즐깁니다.</p>
+                                <div class="spot-tips" data-i18n="spot5-tips">💡 팁: 창가 자리는 인기가 많으니 오픈 직후나 평일 방문이 꿀팁! 바닷바람이 시원하게 통하는 테라스 자리를 노려보세요.</div>
+                            </div>
+                        </div>
+
+                        <!-- Spot 6 -->
+                        <div class="spot-card" data-lat="35.1555" data-lng="129.0645" onclick="focusMarker(35.1555, 129.0645, 15)">
+                            <div class="spot-icon day-2-bg">3</div>
+                            <div class="spot-content">
+                                <div class="spot-meta">
+                                    <span class="spot-time">17:00</span>
+                                    <span class="spot-tag" data-i18n="tag-hip">트렌디</span>
+                                </div>
+                                <h3 class="spot-name" data-i18n="spot6-name">전포 카페거리 (서면)</h3>
+                                <p class="spot-desc" data-i18n="spot6-desc">부산 도심 속 젊은이들의 성지입니다. 공구 공장들이 밀집해 있던 골목이 이색적이고 트렌디한 개인 카페, 소품샵, 맛집들로 재탄생해 독특한 빈티지 감성을 자아냅니다.</p>
+                                <div class="spot-tips" data-i18n="spot6-tips">💡 팁: 아기자기한 소품샵(오브젝트, 마가린상점 등) 투어를 함께 돌면 친구에게 뜻깊은 기념품을 선물해 줄 수 있어요.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DAY 3 TIMELINE -->
+                <div class="day-group" id="day-group-3" data-day="3">
+                    <div class="day-header day-3-color">
+                        <span class="day-badge">Day 3</span>
+                        <h2 data-i18n="day3-title">핫플레이스 탐방 & 영혼의 돼지국밥</h2>
+                        <span class="day-desc" data-i18n="day3-subtitle">알록달록한 문화예술 마을을 여행하고, 뜨끈한 로컬 소울푸드로 여행을 마무리합니다.</span>
+                    </div>
+
+                    <div class="timeline">
+                        <!-- Spot 7 -->
+                        <div class="spot-card" data-lat="35.0975" data-lng="129.0093" onclick="focusMarker(35.0975, 129.0093, 15)">
+                            <div class="spot-icon day-3-bg">1</div>
+                            <div class="spot-content">
+                                <div class="spot-meta">
+                                    <span class="spot-time">10:00</span>
+                                    <span class="spot-tag" data-i18n="tag-culture">문화/예술</span>
+                                </div>
+                                <h3 class="spot-name" data-i18n="spot7-name">감천문화마을</h3>
+                                <p class="spot-desc" data-i18n="spot7-desc">산자락을 따라 형형색색의 집들이 계단식으로 늘어선 아름다운 마을입니다. 골목 구석구석 설치된 미술작품과 파스텔톤의 풍경이 마치 동화 속에 온 듯한 기분을 줍니다.</p>
+                                <div class="spot-tips" data-i18n="spot7-tips">💡 팁: '어린왕자와 사막여우' 조각상이 있는 포토존은 늘 줄이 깁니다. 오전 일찍 방문해 여유롭게 사진을 찍는 것을 추천해요.</div>
+                            </div>
+                        </div>
+
+                        <!-- Spot 8 -->
+                        <div class="spot-card" data-lat="35.0985" data-lng="129.0298" onclick="focusMarker(35.0985, 129.0298, 15)">
+                            <div class="spot-icon day-3-bg">2</div>
+                            <div class="spot-content">
+                                <div class="spot-meta">
+                                    <span class="spot-time">13:00</span>
+                                    <span class="spot-tag" data-i18n="tag-market">전통시장</span>
+                                </div>
+                                <h3 class="spot-name" data-i18n="spot8-name">남포동 BIFF 광장 & 국제시장</h3>
+                                <p class="spot-desc" data-i18n="spot8-desc">부산 영화의 발상지인 BIFF 광장과 대표적 전통시장인 국제시장, 깡통시장입니다. 영화 '국제시장'의 배경을 둘러보고 씨앗호떡, 떡볶이 등 풍성한 길거리 음식을 먹어봅니다.</p>
+                                <div class="spot-tips" data-i18n="spot8-tips">💡 팁: 남포동에서 꼭 '승기 찹쌀씨앗호떡'을 드셔보세요. 고소하고 달달한 맛이 일품입니다!</div>
+                            </div>
+                        </div>
+
+                        <!-- Spot 9 -->
+                        <div class="spot-card" data-lat="35.1147" data-lng="129.0398" onclick="focusMarker(35.1147, 129.0398, 15)">
+                            <div class="spot-icon day-3-bg">3</div>
+                            <div class="spot-content">
+                                <div class="spot-meta">
+                                    <span class="spot-time">15:30</span>
+                                    <span class="spot-tag" data-i18n="tag-local">로컬푸드</span>
+                                </div>
+                                <h3 class="spot-name" data-i18n="spot9-name">부산역 초량 돼지국밥 골목</h3>
+                                <p class="spot-desc" data-i18n="spot9-desc">부산 여행의 대미를 장식할 원조 돼지국밥입니다. 진하게 우려낸 뽀얀 돼지 사골 국물에 부드러운 고기가 가득 들어있어 부추 무침을 듬뿍 넣어 먹는 부산 최고의 소울푸드입니다.</p>
+                                <div class="spot-tips" data-i18n="spot9-tips">💡 팁: 부산역 근처의 '본전돼지국밥' 또는 '대건명가'는 잡내가 없고 깊은 국물 맛으로 유명해 기차 타기 전 든든한 한 끼로 완벽합니다.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Interactive Travel Assistant Section -->
+    <section class="assistant-section">
+        <div class="section-title-wrapper">
+            <h2 class="section-title" data-i18n="assistant-title">🧳 여행 도우미 포켓 가이드</h2>
+            <p class="section-desc" data-i18n="assistant-desc">일본인 친구와 소통할 때 유용한 필수 한국어 회화와 교통 꿀팁을 확인하세요.</p>
+        </div>
+
+        <div class="assistant-grid">
+            <!-- Travel Korean Flashcards -->
+            <div class="assistant-card phrase-card">
+                <h3 class="assistant-card-title"><span class="card-title-icon">🗣️</span> <span data-i18n="helper-phrase-title">서바이벌 한마디 (카드 클릭!)</span></h3>
+                <p class="card-sub" data-i18n="helper-phrase-desc">탭하면 발음 및 일본어 번역이 보입니다.</p>
+                
+                <div class="flashcards-container">
+                    <!-- Flashcard 1 -->
+                    <div class="flashcard" onclick="this.classList.toggle('flipped')">
+                        <div class="card-front">
+                            <span class="korean-text">돼지국밥 하나 주세요!</span>
+                            <span class="phonetic">[Dwae-ji-guk-bap ha-na ju-se-yo]</span>
+                        </div>
+                        <div class="card-back">
+                            <span class="japanese-text">豚クッパを一つください！</span>
+                            <span class="situation">주문할 때 (注文する時)</span>
+                        </div>
+                    </div>
+
+                    <!-- Flashcard 2 -->
+                    <div class="flashcard" onclick="this.classList.toggle('flipped')">
+                        <div class="card-front">
+                            <span class="korean-text">여기 바다 보이는 자리 있나요?</span>
+                            <span class="phonetic">[Yeo-gi ba-da bo-i-neun ja-ri it-na-yo]</span>
+                        </div>
+                        <div class="card-back">
+                            <span class="japanese-text">ここ海が見える席はありますか？</span>
+                            <span class="situation">식당/카페에서 (食堂・カフェで)</span>
+                        </div>
+                    </div>
+
+                    <!-- Flashcard 3 -->
+                    <div class="flashcard" onclick="this.classList.toggle('flipped')">
+                        <div class="card-front">
+                            <span class="korean-text">다대기(양념) 따로 주세요.</span>
+                            <span class="phonetic">[Da-dae-gi tta-ro ju-se-yo]</span>
+                        </div>
+                        <div class="card-back">
+                            <span class="japanese-text">タテギ(辛味調味料)は別にしてください。</span>
+                            <span class="situation">국밥 간 맞출 때 (クッパの味付けで)</span>
+                        </div>
+                    </div>
+
+                    <!-- Flashcard 4 -->
+                    <div class="flashcard" onclick="this.classList.toggle('flipped')">
+                        <div class="card-front">
+                            <span class="korean-text">이거 진짜 맛있다! 추천해요!</span>
+                            <span class="phonetic">[I-geo jin-jja ma-sit-da! Chu-cheon-hae-yo]</span>
+                        </div>
+                        <div class="card-back">
+                            <span class="japanese-text">これ本当に美味しい！おすすめです！</span>
+                            <span class="situation">음식을 먹을 때 (料理を食べる時)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Transport & Useful Information -->
+            <div class="assistant-card info-card">
+                <h3 class="assistant-card-title"><span class="card-title-icon">🚇</span> <span data-i18n="helper-info-title">알아두면 유용한 부산 여행 팁</span></h3>
+                <div class="tips-list">
+                    <div class="tip-item">
+                        <div class="tip-icon">💳</div>
+                        <div class="tip-text-wrapper">
+                            <h4 data-i18n="tip-trans-title">교통카드 통합 안내</h4>
+                            <p data-i18n="tip-trans-desc">일본에서 사용하던 IC 교통카드는 불가하나, 한국의 교통카드(티머니, 캐시비 등) 및 트래블로그/트래블월렛 카드로 부산 지하철 및 버스를 완벽하게 탈 수 있습니다.</p>
+                        </div>
+                    </div>
+                    <div class="tip-item">
+                        <div class="tip-icon">🚕</div>
+                        <div class="tip-text-wrapper">
+                            <h4 data-i18n="tip-taxi-title">택시 호출 앱 추천</h4>
+                            <p data-i18n="tip-taxi-desc">길가에서 택시를 잡기 어렵다면, 일본에서도 사용하는 'Uber' 앱을 켜면 한국의 UT 택시가 바로 매칭되어 결제까지 한 번에 편리하게 이용할 수 있습니다.</p>
+                        </div>
+                    </div>
+                    <div class="tip-item">
+                        <div class="tip-icon">🎒</div>
+                        <div class="tip-text-wrapper">
+                            <h4 data-i18n="tip-luggage-title">물품보관소 & 무료 짐 보관</h4>
+                            <p data-i18n="tip-luggage-desc">부산역 2층이나 주요 지하철 역사(Haeundae, Nampo 등)에는 짐 보관함이 잘 되어 있어 무거운 캐리어를 보관하고 가볍게 다닐 수 있습니다.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer Section -->
+    <footer>
+        <div class="footer-content">
+            <p class="footer-heart">💙 Made with love for your best friend in Busan 💙</p>
+            <p class="footer-copy">&copy; 2026 Busan Travel Map Guide. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Leaflet.js Script for Map -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    
+    <!-- Custom JS Logic -->
+    <script src="app.js"></script>
+</body>
+</html>
